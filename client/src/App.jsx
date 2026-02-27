@@ -1,11 +1,15 @@
-import React from 'react'
+import React from 'react';
+import Landing from './pages/Landing/Landing';
+import { Routes, Route, BrowserRouter as Router } from 'react-router'
 
 const App = () => {
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
