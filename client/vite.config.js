@@ -6,3 +6,6 @@ export default defineConfig({
     tailwindcss(),
   ],
 })
+
+// primary-blue: #1747ac
+// dark-blue: #1a325f

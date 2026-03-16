@@ -1,99 +1,165 @@
-import { TbLayoutKanban } from "react-icons/tb";
-import { MdOutlineQueryStats } from "react-icons/md";
-import { RiShieldCheckLine } from "react-icons/ri";
-import { TbArrowUpRight } from "react-icons/tb";
 import React from "react";
 
 const Stay = () => {
-  return (
-    <div className="bg-white min-h-screen flex items-center justify-center p-8 font-sans">
-      <div className="max-w-5xl w-full">
+  // Feature data – clean and static
+  const features = [
+    {
+      icon: "📋",
+      title: "Visual Kanban Workflow",
+      description:
+        "Drag‑and‑drop boards that reflect real‑time status. Celebrate placements with confetti, not spreadsheets.",
+      image:
+        "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      color: "primary",
+    },
+    {
+      icon: "📊",
+      title: "Dashboard insights",
+      description:
+        "At‑a‑glance metrics for students, companies, approvals & revenue. Customize widgets to focus on what matters.",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      color: "dark",
+    },
+    {
+      icon: "✅",
+      title: "Approvals & verification",
+      description:
+        "Friendly list views with checklists, notes, and status badges, no more hunting through emails.",
+      image:
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      color: "gray-muted",
+    },
+  ];
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Stay on top of every approval and placement.
-          </h1>
-          <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
-            An admin-first view with Kanban boards, quick stats, and revenue
-            tracking—without feeling like old-school enterprise software.
+  // Helper to get color-specific classes (Tailwind safelist these)
+  const getColorClasses = (color) => {
+    switch (color) {
+      case "primary":
+        return {
+          bgLight: "bg-primary/10",
+          text: "text-primary",
+          border: "border-primary/20",
+        };
+      case "dark":
+        return {
+          bgLight: "bg-dark/10",
+          text: "text-dark",
+          border: "border-dark/20",
+        };
+      case "gray-muted":
+        return {
+          bgLight: "bg-gray-muted/10",
+          text: "text-gray-muted",
+          border: "border-gray-muted/20",
+        };
+      default:
+        return {
+          bgLight: "bg-gray-100",
+          text: "text-gray-700",
+          border: "border-gray-200",
+        };
+    }
+  };
+
+  return (
+    <section className="relative  py-20 lg:py-28 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-40 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 -right-20 w-80 h-80 bg-gray-muted/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-6">
+        {/* Section header */}
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-dark leading-tight">
+            Everything you need to streamline
+            <span className="block text-primary">placements & approvals</span>
+          </h2>
+          <p className="text-lg text-gray-muted mt-6 max-w-2xl mx-auto">
+            From intuitive Kanban boards to real‑time insights. Built for modern teams who want clarity without complexity.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Feature grid – static cards with clean mapping */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, idx) => {
+            const colors = getColorClasses(feature.color);
+            return (
+              <div
+                key={idx}
+                className="group relative bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+              >
+                {/* Image with overlay */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={feature.image}
+                    alt={feature.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-t from-${feature.color}-900/30 to-transparent`}
+                  />
+                </div>
 
-          <div className="border border-gray-200 rounded-xl p-5">
-            <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
-              <TbLayoutKanban size={20} color="#6B9FD4" />
-            </div>
-            <h2 className="text-sm font-semibold text-gray-900 mb-2">Placement Kanban</h2>
-            <p className="text-xs text-gray-400 leading-relaxed mb-1">
-              Pending, Shortlisted, Placed—drag and drop cards with instant
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed mb-1">
-              visual feedback and celebratory states when students get placed.
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Columns shift subtly when populated to highlight activity.
-            </p>
-          </div>
+                {/* Content */}
+                <div className="p-6">
+                 
+                  <h3 className="text-xl font-bold text-dark mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-muted text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
 
-          <div className="border border-gray-200 rounded-xl p-5">
-            <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center mb-4">
-              <MdOutlineQueryStats size={20} color="#4CAF8A" />
-            </div>
-            <h2 className="text-sm font-semibold text-gray-900 mb-2">Admin stats bar</h2>
-            <p className="text-xs text-gray-400 leading-relaxed mb-4">
-              Quickly scan Active students, Active Companies, Pending Approvals,
-              and This Month's Revenue from a single top bar.
-            </p>
-
-            <div className="grid grid-cols-4 gap-2">
-              <div className="border border-gray-200 rounded-lg p-2.5">
-                <p className="text-xs text-gray-400 leading-tight mb-1">Students</p>
-                <p className="text-base font-bold text-gray-900">1.2k</p>
-              </div>
-              <div className="border border-gray-200 rounded-lg p-2.5">
-                <p className="text-xs text-gray-400 leading-tight mb-1">Compan ies</p>
-                <p className="text-base font-bold text-gray-900">180</p>
-              </div>
-              <div className="border border-gray-200 rounded-lg p-2.5">
-                <p className="text-xs text-gray-400 leading-tight mb-1">Approv als</p>
-                <p className="text-base font-bold text-gray-900">24</p>
-              </div>
-              <div className="border border-gray-200 rounded-lg p-2.5 relative pb-5">
-                <p className="text-xs text-gray-400 leading-tight mb-1">Revenue</p>
-                <p className="text-base font-bold text-gray-900">$86k</p>
-                <div className="absolute -bottom-2 -right-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full px-1.5 py-0.5 flex items-center gap-0.5 whitespace-nowrap">
-                  <TbArrowUpRight size={10} />
-                  +18% MoM
+                  {/* Decorative element */}
+                  <div
+                    className={`absolute bottom-0 right-0 w-20 h-20 ${colors.bgLight} rounded-full blur-2xl opacity-30 -z-10`}
+                  />
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div className="border border-gray-200 rounded-xl p-5">
-            <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center mb-4">
-              <RiShieldCheckLine size={20} color="#C9A84C" />
-            </div>
-            <h2 className="text-sm font-semibold text-gray-900 mb-2">Approvals & verification</h2>
-            <p className="text-xs text-gray-400 leading-relaxed mb-3">
-              Approve companies, verify students, and manage invoices in a
-              friendly list view instead of clunky spreadsheets.
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed mb-1">
-              Company Approvals with Approve / Reject + notes.
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed mb-1">
-              Student Verification with simple checkboxes.
-            </p>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Placement Management & Revenue Dashboard views.
-            </p>
-          </div>
-
+            );
+          })}
         </div>
+
+        {/* Secondary callout – clean, no extra interface */}
+        <div className="mt-20 bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100 flex flex-col lg:flex-row items-center gap-10">
+          <div className="lg:w-1/2">
+            <h3 className="text-3xl font-bold text-dark mb-4">
+              <span className="text-primary">Real‑time sync</span> across your entire team
+            </h3>
+            <p className="text-gray-muted mb-6">
+              Whether you’re in the office or on the go, everyone sees the same up‑to‑date information.
+              Approvals, placement updates, and revenue changes are reflected instantly.
+            </p>
+            <ul className="space-y-3">
+              {[
+                "Live updates without page refresh",
+                "Role‑based access for admins, coordinators, and viewers",
+                "Export reports in one click",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="text-primary mt-1">.</span>
+                  <span className="text-gray-700">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="lg:w-1/2">
+            <img
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Team collaboration"
+              className="rounded-2xl shadow-2xl border border-gray-200"
+            />
+          </div>
+        </div>
+
+        {/* Decorative line */}
+        <div className="hidden lg:block absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent -z-5" />
       </div>
-    </div>
+    </section>
   );
 };
 

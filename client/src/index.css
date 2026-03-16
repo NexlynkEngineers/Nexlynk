@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@theme {
+  /* Primary brand colors */
+  --color-primary: #1747ac;   /* primary-blue */
+  --color-dark: #1a325f;       /* dark-blue */
+
+  /* Neutral / background colors (kept from original) */
+  --color-cream: #f0ede3;
+  --color-gray-light: #d4d9c9;
+  --color-gray-muted: #4d6055;
+}

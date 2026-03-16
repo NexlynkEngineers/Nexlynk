@@ -12,7 +12,7 @@ import Footer from './Components/Footer';
 import SignupPage from './Auth/Signup';
 import LoginPage from './Auth/Login';
 import Dashboard from './pages/Landing/JimPages/Dashboard';
-import Hero from './pages/Landing/JimPages/Hero';
+import Hero from './pages/Landing/Hero';
 
 
 const App = () => {

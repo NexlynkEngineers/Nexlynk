@@ -1,7 +1,7 @@
 import React from 'react'
 import Stay from './StayOnTop/Stay'
 import FromSignup from './FromSignup/FromSignup'
-import Hero from './JimPages/Hero'
+import Hero from './Hero'
 
 const Landing = () => {
   return (

@@ -1,63 +1,37 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router';
-import logo from "../assets/logo.png"
+import logo from '../assets/logo.png'; // your logo path
 
-export default function Navbar() {
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/students', label: 'Students' },
-    { path: '/companies', label: 'Companies' },
-    { path: '/admins', label: 'Admins' },
-    { path: '/pricing', label: 'Pricing' },
-  ];
+const NAV_LINKS = [ "Home","About Us", "Students", "Companies", "Pricing"];
 
+const Navbar = () => {
   return (
-    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
-        {/* Logo/Link to Home - Wrapped in Link for navigation */}
-        <Link to="/" className="flex items-center">
-          <img 
-            src={logo} 
-            alt="NexlyLink" 
-            className="h-20  w-auto object-contain"
-          />
-        </Link>
-
-        {/* Navigation Links */}
-        <div className="hidden md:flex gap-8 items-center">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => 
-                `text-xl font-medium transition-colors ${
-                  isActive 
-                    ? 'text-blue-600' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-
-        {/* Auth Buttons */}
-        <div className="flex items-center gap-3">
-          <Link 
-            to="/login" 
-            className="text-xl font-medium text-gray-600 hover:text-gray-900 transition-colors px-3 py-2"
-          >
-            Log in
-          </Link>
-          <Link 
-            to="/signup"
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg text-xl font-semibold hover:bg-blue-700 transition-colors shadow-sm hover:shadow"
-          >
-            Get started
-          </Link>
-        </div>
+    <nav className="flex items-center justify-between px-10 py-[18px]">
+      {/* Logo */}
+      <div className="flex items-center gap-2.5">
+        <img src={logo} alt="Podcast Coach" className="h-8 w-auto" />
+        
       </div>
+
+      {/* Nav pill */}
+      <div className="flex items-center gap-0.5 rounded-full bg-dark px-2 py-1.5">
+        {NAV_LINKS.map((item) => (
+          <a
+            key={item}
+            href="#"
+            className="rounded-full px-[15px] py-[7px] text-[13.5px] text-gray-light no-underline transition-colors hover:text-white"
+          >
+            {item}
+          </a>
+        ))}
+      </div>
+
+      {/* Contact button */}
+      <button className="cursor-pointer rounded-full border-none bg-dark px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#0f3a8a]">
+        Contact
+      </button>
     </nav>
   );
-}
+};
+
+export default Navbar;
