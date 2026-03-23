@@ -1,4 +1,5 @@
 // src/controllers/student.controller.js
+const { safeAdd, emailQueue } = require('../jobs/queue');
 const { v4: uuidv4 } = require('uuid');
 const { query } = require('../config/db');
 const { supabaseAdmin } = require('../config/supabase');
@@ -16,11 +17,9 @@ exports.getProfile = async (req, res, next) => {
        WHERE sp.id = $1`,
       [req.params.id]
     );
-
     if (!rows.length) {
       return res.status(404).json({ error: 'Not Found', message: 'Student profile not found' });
     }
-
     return res.json({ data: rows[0] });
   } catch (err) {
     next(err);
@@ -43,7 +42,6 @@ exports.updateProfile = async (req, res, next) => {
   }
 
   try {
-    // Build SET clause dynamically
     const setClause = updates.map((k, i) => `${k} = $${i + 2}`).join(', ');
     const values = [req.params.id, ...updates.map(k => {
       const v = fields[k];
@@ -59,7 +57,6 @@ exports.updateProfile = async (req, res, next) => {
       return res.status(404).json({ error: 'Not Found', message: 'Student not found' });
     }
 
-    // Recalculate profile completion
     const profile = rows[0];
     const completionFields = [
       'name', 'phone', 'city', 'university', 'course',
@@ -110,6 +107,35 @@ exports.uploadCV = async (req, res, next) => {
   }
 };
 
+// ── GET /students/:id/applications ───────────────────────
+
+exports.getApplications = async (req, res, next) => {
+  try {
+    const { rows } = await query(
+      `SELECT
+         a.*,
+         json_build_object(
+           'id',           o.id,
+           'title',        o.title,
+           'type',         o.type,
+           'location',     o.location,
+           'stipend',      o.stipend,
+           'application_deadline', o.application_deadline,
+           'company_name', cp.name
+         ) AS opportunity
+       FROM applications a
+       JOIN opportunities o      ON o.id  = a.opportunity_id
+       JOIN company_profiles cp  ON cp.id = o.company_id
+       WHERE a.student_id = $1
+       ORDER BY a.applied_at DESC`,
+      [req.params.id]
+    );
+    return res.json({ data: rows });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // ── GET /opportunities ────────────────────────────────────
 
 exports.listOpportunities = async (req, res, next) => {
@@ -122,7 +148,7 @@ exports.listOpportunities = async (req, res, next) => {
     let idx = 1;
 
     if (discipline) {
-      conditions.push(`o.disciplines @> $${idx}::jsonb`); // Assuming disciplines is stored as JSONB array
+      conditions.push(`o.disciplines @> $${idx}::jsonb`);
       values.push(JSON.stringify([discipline]));
       idx++;
     }
@@ -176,16 +202,17 @@ exports.applyToOpportunity = async (req, res, next) => {
   const opportunityId = req.params.id;
 
   try {
-    // Verify opportunity exists and is published
     const { rows: opp } = await query(
-      "SELECT id FROM opportunities WHERE id = $1 AND status = 'published'",
+      `SELECT o.id, o.title, cp.name AS company_name, cp.contact_email AS company_email
+       FROM opportunities o
+       JOIN company_profiles cp ON cp.id = o.company_id
+       WHERE o.id = $1 AND o.status = 'published'`,
       [opportunityId]
     );
     if (!opp.length) {
       return res.status(404).json({ error: 'Not Found', message: 'Opportunity not found or closed' });
     }
 
-    // Check for duplicate (idempotent)
     const { rows: existing } = await query(
       'SELECT id FROM applications WHERE opportunity_id = $1 AND student_id = $2',
       [opportunityId, studentId]
@@ -199,14 +226,56 @@ exports.applyToOpportunity = async (req, res, next) => {
     }
 
     const { rows } = await query(
-      `INSERT INTO applications (opportunity_id, student_id)
-       VALUES ($1, $2) RETURNING *`,
-      [opportunityId, studentId]
+      `INSERT INTO applications (opportunity_id, student_id, cover_letter)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [opportunityId, studentId, req.body?.cover_letter || null]
     );
+
+    // Fetch student details for emails
+    const { rows: student } = await query(
+      `SELECT u.email, sp.name, sp.university, sp.discipline
+       FROM users u JOIN student_profiles sp ON sp.id = u.id
+       WHERE u.id = $1`,
+      [studentId]
+    );
+
+    if (student.length) {
+      // Email to student — application received
+      await safeAdd(emailQueue, 'sendApplicationReceivedEmail', {
+        studentEmail:     student[0].email,
+        studentName:      student[0].name,
+        opportunityTitle: opp[0].title,
+        companyName:      opp[0].company_name,
+      });
+
+      // Email to company — new application alert
+      if (opp[0].company_email) {
+        await safeAdd(emailQueue, 'sendNewApplicationAlertEmail', {
+          companyEmail:      opp[0].company_email,
+          companyName:       opp[0].company_name,
+          studentName:       student[0].name,
+          studentUniversity: student[0].university,
+          studentDiscipline: student[0].discipline,
+          opportunityTitle:  opp[0].title,
+        });
+      }
+    }
 
     logger.info({ event: 'application_submitted', studentId, opportunityId });
 
     return res.status(201).json({ data: rows[0] });
+  } catch (err) {
+    next(err);
+  }
+};
+// ── POST /opportunities/:id/view ─────────────────────────
+exports.trackView = async (req, res, next) => {
+  try {
+    await query(
+      'UPDATE opportunities SET view_count = view_count + 1 WHERE id = $1',
+      [req.params.id]
+    );
+    return res.json({ ok: true });
   } catch (err) {
     next(err);
   }

@@ -2,12 +2,89 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/jpeg" href="/icons/icon1.jpeg" />
+    <link rel="apple-touch-icon" href="/icons/icon1.jpeg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nexylink</title>
+    <meta name="theme-color" content="#0B1D3F" />
+    <title>Nexlynk — Internship Platform</title>
+
+    <!-- Primary description -->
+    <meta name="description" content="Nexlynk is Nexlynk is an internship platform connecting students with verified companies. Find opportunities, build your career, and get placed in as little as 8 days." />
+
+    <!-- Open Graph (WhatsApp, Facebook, LinkedIn, Telegram) -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content="https://nexlynk-alpha.vercel.app/" />
+    <meta property="og:title"       content="Nexlynk — Internship Platform" />
+    <meta property="og:description" content="Nexlynk is an internship platform connecting students with verified companies. Find opportunities, build your career, and get placed in as little as 8 days." />
+    <meta property="og:image"       content="https://nexlynk-alpha.vercel.app/icons/icon2.jpeg" />
+    <meta property="og:image:alt"   content="Nexlynk logo" />
+    <meta property="og:site_name"   content="Nexlynk" />
+    <meta property="og:locale"      content="en_KE" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:title"       content="Nexlynk — Internship Platform" />
+    <meta name="twitter:description" content="Nexlynk is an internship platform connecting students with verified companies. Find opportunities, build your career, and get placed in as little as 8 days." />
+    <meta name="twitter:image"       content="https://nexlynk-alpha.vercel.app/icons/icon2.jpeg" />
+
+    <style>
+      /* Loading screen shown before React mounts */
+      #app-loading {
+        position: fixed;
+        inset: 0;
+        background: #0B1D3F;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+      #app-loading img {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        object-fit: cover;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      #app-loading p {
+        margin-top: 16px;
+        color: rgba(255,255,255,0.4);
+        font-family: system-ui, sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.05em;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.6; transform: scale(0.95); }
+      }
+    </style>
   </head>
   <body>
+    <!-- Loading screen — hidden by JS once React mounts -->
+    <div id="app-loading">
+      <img src="/icons/icon1.jpeg" alt="Nexlynk" />
+      <p>Loading Nexlynk...</p>
+    </div>
+
     <div id="root"></div>
+
+    <script>
+      // Hide loading screen once React root renders
+      const observer = new MutationObserver(() => {
+        const root = document.getElementById('root')
+        if (root && root.children.length > 0) {
+          const loader = document.getElementById('app-loading')
+          if (loader) {
+            loader.style.opacity = '0'
+            setTimeout(() => loader.remove(), 300)
+          }
+          observer.disconnect()
+        }
+      })
+      observer.observe(document.getElementById('root'), { childList: true })
+    </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
